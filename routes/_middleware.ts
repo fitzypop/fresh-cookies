@@ -1,9 +1,6 @@
 import { MiddlewareHandlerContext } from "$fresh/server.ts";
-import {
-  getCookies,
-  setCookie,
-} from "https://deno.land/std@0.86.0/http/cookie.ts";
-import { create, verify } from "https://deno.land/x/djwt@v2.7/mod.ts";
+import { getCookies, setCookie } from "cookie";
+import { create, verify } from "djwt";
 import { createKey, Session, State } from "../mod.ts";
 
 export async function handler(

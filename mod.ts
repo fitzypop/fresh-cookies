@@ -1,4 +1,4 @@
-import { Cookie } from "https://deno.land/std@0.86.0/http/cookie.ts";
+import { Cookie } from "cookie";
 
 export class Session {
   #data = new Map();
