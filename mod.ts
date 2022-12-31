@@ -1,5 +1,10 @@
 import { Cookie } from "cookie";
 
+// export type State = { session: Map<unknown, unknown> };
+export type State = { session: Session };
+
+export type CookieOptions = Omit<Cookie, "name" | "value">;
+
 export class Session {
   #data = new Map();
 
@@ -11,7 +16,7 @@ export class Session {
     return Object.fromEntries(this.#data);
   }
 
-  set(key: string, value: any) {
+  set(key: string, value: unknown) {
     this.#data.set(key, value);
 
     return this;
@@ -30,10 +35,6 @@ export class Session {
     return this;
   }
 }
-
-export type State = { session: Session };
-
-export type CookieOptions = Omit<Cookie, "name" | "value">;
 
 export async function createKey(secret: string) {
   return await crypto.subtle.importKey(

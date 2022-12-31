@@ -7,7 +7,7 @@ export async function handler(
   req: Request,
   ctx: MiddlewareHandlerContext<State>,
 ) {
-  const { sessionId } = getCookies(req);
+  const { sessionId } = getCookies(req.headers);
   const secret = Deno.env.get("APP_KEY") || "supa dupa secret!";
   const key = await createKey(secret);
 
@@ -25,7 +25,7 @@ export async function handler(
 
   const response = await ctx.next();
 
-  setCookie(response, {
+  setCookie(response.headers, {
     name: "sessionId",
     value: await create(
       { alg: "HS512", typ: "JWT" },
