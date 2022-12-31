@@ -1,39 +1,42 @@
 import { MiddlewareHandlerContext } from "$fresh/server.ts";
 import { getCookies, setCookie } from "cookie";
-import { create, verify } from "djwt";
-import { createKey, Session, State } from "../mod.ts";
+import { create } from "djwt";
+import {
+  createKey,
+  getSession,
+  Session,
+  sessionExists,
+  State,
+} from "../mod.ts";
 
 export async function handler(
   req: Request,
   ctx: MiddlewareHandlerContext<State>,
 ) {
   const { sessionId } = getCookies(req.headers);
-  const secret = Deno.env.get("APP_KEY") || "supa dupa secret!";
-  const key = await createKey(secret);
+  // const params = !cookieOptions ? {} : cookieOptions;
+  const key = await createKey(Deno.env.get("APP_SECRET") || "her der sercet");
 
-  try {
-    const payload = await verify(sessionId, key);
-    const { ...data } = payload;
-    ctx.state.session = new Session(data);
-  } catch (_e) {
-    console.warn("Invalid JWT token, creating new session...");
+  if (sessionId && (await sessionExists(sessionId, key))) {
+    ctx.state.session = getSession(sessionId);
   }
 
   if (!ctx.state.session) {
     ctx.state.session = new Session();
+    ctx.state.session.set("id", crypto.randomUUID());
   }
 
   const response = await ctx.next();
-
+  console.log(ctx.state.session.has("id"));
   setCookie(response.headers, {
     name: "sessionId",
     value: await create(
       { alg: "HS512", typ: "JWT" },
-      { ...ctx.state.session.data },
+      { ...ctx.state.session.data, flash: ctx.state.session.flashedData },
       key,
     ),
     path: "/",
-    // ...this.#cookieOptions,
+    // ...params,
   });
 
   return response;
