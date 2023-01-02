@@ -22,12 +22,12 @@ export async function handler(
   }
 
   if (!ctx.state.session) {
+    console.log("session not found! Instantiating one now.");
     ctx.state.session = new Session();
     ctx.state.session.set("id", crypto.randomUUID());
   }
 
   const response = await ctx.next();
-  console.log(ctx.state.session.has("id"));
   setCookie(response.headers, {
     name: "sessionId",
     value: await create(

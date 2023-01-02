@@ -21,18 +21,15 @@ export async function sessionExists(
   key: CryptoKey,
 ): Promise<boolean> {
   try {
-    const val = await verify(sessionId, key);
-    console.log("exists", val);
+    await verify(sessionId, key);
     return true;
   } catch (e) {
-    console.warn("Invalid JWT token, creating new session...");
     return false;
   }
 }
 
 export function getSession(sessionId: string): Session {
   const [, payload] = decode(sessionId);
-  console.log("payload", payload);
   const { flash = {}, ...data } = payload;
   return new Session(data as object, flash);
 }
