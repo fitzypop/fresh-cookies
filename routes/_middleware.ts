@@ -43,3 +43,6 @@ export async function handler(
   response.headers.set("location", "/");
   return response;
 }
+
+// TODO: saved for later
+// deleteCookie(headers, "auth", { path: "/", domain: url.hostname });
